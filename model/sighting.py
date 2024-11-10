@@ -22,7 +22,7 @@ class Sighting:
         self.mese = self.datetime.month
 
     def __str__(self):
-        return f"id:{self.id} - {self.city}  [{self.state}], {self.datetime.strftime("%Y-%m-%d %H:%M:%S")}"
+        return f"id:{self.id} - {self.city}  [{self.state}], {self.datetime.strftime("%Y-%m-%d %H:%M:%S")}, {self.duration}"
 
     def __hash__(self):
         return hash(self.id)
