@@ -30,7 +30,9 @@ class View(ft.UserControl):
 
         # First row with some controls
         self.ddyear = ft.Dropdown(label="Anno",
+                                  on_change= self._controller.fillDDshape,
                                   hint_text="Anno da analizzare per gli avvistamenti.")
+        self._controller.fillDDyear()
 
         self.ddshape = ft.Dropdown(label="Shape",
                                    hint_text="Forma da analizzare per gli avvistamenti.")
@@ -45,6 +47,7 @@ class View(ft.UserControl):
         row1 = ft.Row([self.ddyear, self.ddshape, self.btn_graph, self.btn_path],
                       alignment=ft.MainAxisAlignment.SPACE_EVENLY)
         self._page.controls.append(row1)
+
 
         # List View where the reply is printed
         self.txt_result1 = ft.ListView(width=400, expand=1, spacing=10, padding=20, auto_scroll=False)
