@@ -1,3 +1,5 @@
+import copy
+
 from database.DAO import DAO
 import networkx as nx
 
@@ -12,6 +14,8 @@ class Model:
         for st in self.listaStati:
             self.mapStati[st.id] = st
         self.grafo = nx.DiGraph()
+        self.bestPath = []
+        self.bestScore = 0
 
     def getShapeYear(self, anno):
         return DAO.getShapeYear(anno)
@@ -37,3 +41,44 @@ class Model:
         return len(self.grafo.edges())
 
     def getBestPath(self):
+        self.bestScore = 0
+        self.bestPath = []
+        contatoreMesi = {}
+        for i in range(1,13):
+            contatoreMesi[i] = 0
+        listaNodi = list(self.grafo.nodes())
+        parziale = []
+        for n in listaNodi:
+            parziale.append(n)
+            contatoreMesi[n.mese] += 1
+            self.ricorsione(parziale, contatoreMesi)
+            parziale.pop()
+            contatoreMesi[n.mese] -= 1
+        return self.bestPath, self.bestScore
+
+    def ricorsione(self, parziale, contatoreMesi):
+        vicini = list(self.grafo.successors(parziale[-1]))
+        if len(vicini) == 0:
+            if self.getCosto(parziale) > self.bestScore:
+                self.bestScore = self.getCosto(parziale)
+                self.bestPath = copy.deepcopy(parziale)
+        else:
+            for v in vicini:
+                if v.duration > parziale[-1].duration and contatoreMesi[v.mese] < 3:
+                    parziale.append(v)
+                    contatoreMesi[v.mese] += 1
+                    self.ricorsione(parziale, contatoreMesi)
+                    parziale.pop()
+                    contatoreMesi[v.mese] -= 1
+
+    def getCosto(self, parziale):
+        costo = 0
+        for i in range(len(parziale)):
+            if i == 0:
+                costo += 100
+            else:
+                if parziale[i].mese == parziale[i-1].mese:
+                    costo += 200
+                else:
+                    costo += 100
+        return costo

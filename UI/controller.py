@@ -48,3 +48,7 @@ class Controller:
         path, costo = self._model.getBestPath()
         self._view.txt_result2.controls.clear()
         self._view.txt_result2.controls.append(ft.Text(f"Costo cammino massimo: {costo}"))
+        for n in path:
+            self._view.txt_result2.controls.append(ft.Text(f"{n}"))
+        self._view.update_page()
+
